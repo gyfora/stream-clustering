@@ -1,1 +1,6 @@
 target/
+.cache/
+.cache
+.classpath
+.project
+.settings/

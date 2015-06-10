@@ -14,23 +14,24 @@ object SimpleStreamClustering {
 
   def main(args: Array[String]): Unit = {
 
-    val env = StreamExecutionEnvironment.getExecutionEnvironment
-
-    val input1 = readInput("/Users/gyfora/OneDrive/LIU/streamclustering/data1.csv", env).map(x=>{Thread.sleep(2);x})
-    val input2 = readInput("/Users/gyfora/OneDrive/LIU/streamclustering/data2.csv", env).map(x=>{Thread.sleep(2);x})
-    val input3 = readInput("/Users/gyfora/OneDrive/LIU/streamclustering/data3.csv", env).map(x=>{Thread.sleep(2);x})
-
+//	runExperiments("data1")
+//	runExperiments("data2")
+	runExperiments("data3")
     
+  }
+  
+  def runExperiments(inputName: String) = {
+    val env = StreamExecutionEnvironment.getExecutionEnvironment
+    
+    val input = readInput("/Users/gyfora/OneDrive/LIU/streamclustering/"+inputName+".csv", env).map(x=>{Thread.sleep(2);x})
+    
+    clusterNonParallel(input, new SimpleKMeans(4), "/Users/gyfora/OneDrive/LIU/streamclustering/"+inputName+"_nonParallelNB.csv")
+    clusterNonParallel(input, new SimpleKMeans(4, timeBiasedMean(0.1)), "/Users/gyfora/OneDrive/LIU/streamclustering/"+inputName+"_nonParallelTB.csv")
 
-    clusterNonParallel(input1, new SimpleKMeans(4), "/Users/gyfora/OneDrive/LIU/streamclustering/data1_nonParallelNB.csv")
-    clusterNonParallel(input1, new SimpleKMeans(4, timeBiasedMean(0.1)), "/Users/gyfora/OneDrive/LIU/streamclustering/data1_nonParallelTB.csv")
-
-    clusterParallel(input1, new ParallelKMeans(4, timeBiasedMean(0.1),100), "/Users/gyfora/OneDrive/LIU/streamclustering/data1_parallelTB.csv")
-    clusterParallel(input1, new ParallelKMeans(4, timeBiasedMean(0.1),100, distanceBased(0.5)), "/Users/gyfora/OneDrive/LIU/streamclustering/data1_parallelTB_D.csv")
+    clusterParallel(input, new ParallelKMeans(4, timeBiasedMean(0.1),100), "/Users/gyfora/OneDrive/LIU/streamclustering/"+inputName+"_parallelTB.csv")
+    clusterParallel(input, new ParallelKMeans(4, timeBiasedMean(0.1),100, distanceBased(0.5)), "/Users/gyfora/OneDrive/LIU/streamclustering/"+inputName+"_parallelTB_D.csv")
 
     env.execute
-    
-
   }
 
   
