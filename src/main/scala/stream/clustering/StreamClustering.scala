@@ -1,7 +1,6 @@
 package stream.clustering
 
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.scala.examples.clustering.SimpleStreamClustering._
 import org.apache.flink.api.common.functions.MapFunction
 import org.apache.flink.core.fs.FileSystem
 import org.apache.flink.api.common.functions.FlatMapFunction
@@ -9,6 +8,7 @@ import org.apache.flink.util.Collector
 
 object StreamClustering {
 
+  case class Point(id: Int, x: Double, y: Double)
   type Centers = List[(Point, Long)]
   type LabeledPoint = (Point, Int)
   type PointWithCount = (Point, Long)
@@ -85,7 +85,8 @@ object StreamClustering {
   def removeIndex[A](list: List[A], ix: Int) = if (list.size < ix) list
                            else list.take(ix) ++ list.drop(ix+1)
 
-  class SimpleKMeans(numClusters: Int, updateCenter: (PointWithCount, Point) => PointWithCount = nonBiasedMean) extends MapFunction[Point, LabeledPoint] {
+  class SimpleKMeans(numClusters: Int, updateCenter: (PointWithCount, Point) => PointWithCount = nonBiasedMean)
+        extends MapFunction[Point, LabeledPoint] {
 
     var centers: Centers = List()
     val cluster = clusterAndUpdateCenters(updateCenter) _ 

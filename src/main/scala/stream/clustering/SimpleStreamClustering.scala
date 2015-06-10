@@ -12,8 +12,6 @@ import org.apache.flink.api.common.functions.MapFunction
 
 object SimpleStreamClustering {
 
-  case class Point(id: Int, x: Double, y: Double)
-
   def main(args: Array[String]): Unit = {
 
     val env = StreamExecutionEnvironment.getExecutionEnvironment
